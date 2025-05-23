@@ -60,7 +60,7 @@ public class AutorController {
             if(autorOptional.isEmpty()){
                 return ResponseEntity.notFound().build();
             }
-            service.deletar(autorOptional.get());
+            service.deletar(autorOptional.get());git s
             return ResponseEntity.noContent().build();
     }
 }
