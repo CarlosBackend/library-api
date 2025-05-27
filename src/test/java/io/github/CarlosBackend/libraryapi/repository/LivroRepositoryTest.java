@@ -30,8 +30,8 @@ class LivroRepositoryTest {
         livro.setTitulo("Cienca da computação");
         livro.setDataPublicacao(LocalDate.of(1983,3,22));
 
-        //Autor autor =  autorRepository.findById(UUID.fromString("c16b31c1-7f4b-436d-b37f-62af15521a93")).orElse(null);
-        //livro.setAutor(autor);
+        Autor autor =  autorRepository.findById(UUID.fromString("6b76607b-6b90-4ab9-a299-41d812422aa4")).orElse(null);
+        livro.setAutor(autor);
 
 
         repository.save(livro);
@@ -50,7 +50,7 @@ class LivroRepositoryTest {
         Autor autor = new Autor();
         autor.setNome("Jose");
         autor.setNacionalidade("Brasileira");
-        autor.setDate(LocalDate.of(1952,11,12));
+        autor.setDataNascimento(LocalDate.of(1952,11,12));
 
         livro.setAutor(autor);
         repository.save(livro);
@@ -70,7 +70,7 @@ class LivroRepositoryTest {
         Autor autor = new Autor();
         autor.setNome("Joao");
         autor.setNacionalidade("Brasileira");
-        autor.setDate(LocalDate.of(1952,11,12));
+        autor.setDataNascimento(LocalDate.of(1952,11,12));
 
         livro.setAutor(autor);
         repository.save(livro);
