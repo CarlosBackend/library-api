@@ -5,6 +5,7 @@ import io.github.CarlosBackend.libraryapi.exceptions.OperacaoNaoPermitidaExcepti
 import io.github.CarlosBackend.libraryapi.exceptions.RegistroDuplicadoException;
 import io.github.CarlosBackend.libraryapi.model.Autor;
 import io.github.CarlosBackend.libraryapi.service.AutorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class AutorController {
 
 
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody AutorDTO autor) {
+    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO autor) {
         try {
             var autorEntidade = autor.mapearParaAutor();
             service.salvar(autorEntidade);
@@ -80,7 +81,7 @@ public class AutorController {
     public ResponseEntity<List<AutorDTO>> pesquisar(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "nacionalidade", required = false) String nacionalidade){
-        List<Autor> resultado = service.pesquisa(nome, nacionalidade);
+        List<Autor> resultado = service.pesquisaByExample(nome, nacionalidade);
         List<AutorDTO> lista = resultado.stream().map(autor -> new AutorDTO(autor.getId(),
                 autor.getNome(),
                 autor.getDataNascimento(),
@@ -91,7 +92,7 @@ public class AutorController {
 
     @PutMapping("{id}")
     public ResponseEntity<Object> atualizar(
-            @PathVariable("id") String id, @RequestBody AutorDTO dto) {
+            @PathVariable("id") String id, @RequestBody @Valid AutorDTO dto) {
         try {
             var idAutor = UUID.fromString(id);
             Optional<Autor> autorOptional = service.obterPorId(idAutor);
