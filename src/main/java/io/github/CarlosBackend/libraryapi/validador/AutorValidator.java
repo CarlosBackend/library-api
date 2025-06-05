@@ -17,10 +17,7 @@ public class AutorValidator {
     //Caso exista, mas o id do autor não foi informado, lança uma exceção de RegistroDuplicadoException
     //Caso exista e o id do autor foi informado, verifica se o autor já existe na base de dados
     //Caso exista, lança uma exceção de RegistroDuplicadoException
-
-
     private AutorRepository repository;
-
 
     public AutorValidator(AutorRepository repository) {
         this.repository = repository;
