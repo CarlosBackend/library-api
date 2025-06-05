@@ -1,6 +1,4 @@
 package io.github.CarlosBackend.libraryapi.controller.dto;
-
-import io.github.CarlosBackend.libraryapi.model.Autor;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,12 +20,5 @@ public record AutorDTO(
         @Size(max = 50, min = 2,message = "A nacionalidade deve ter no máximo 50 caracteres")
         String nacionalidade) {
 
-    public Autor mapearParaAutor(){
-        Autor autor = new Autor();
-        autor.setNome(this.nome);
-        autor.setDataNascimento(this.dataNascimento);
-        autor.setNacionalidade(this.nacionalidade);
-        return autor;
-    }
 }
 
