@@ -2,6 +2,8 @@ package io.github.CarlosBackend.libraryapi.repository.specs;
 
 import io.github.CarlosBackend.libraryapi.model.GeneroLivro;
 import io.github.CarlosBackend.libraryapi.model.Livro;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 public class LivroSpecs {
@@ -26,5 +28,13 @@ public class LivroSpecs {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(criteriaBuilder.function("to_char",String.class,
                         root.get("dataPublicacao"),criteriaBuilder.literal("YYYY")),anoPublicacao.toString());
+    }
+    public static Specification<Livro> nomeAutorLike(String  nome){
+        return (root, query, criteriaBuilder)
+                -> {
+            Join<Object, Object> joinAutor = root.join("autor", JoinType.INNER);
+            return criteriaBuilder.like(criteriaBuilder.upper(joinAutor.get("nome")), "%" + nome.toUpperCase() + "%");
+
+        };
     }
 }
