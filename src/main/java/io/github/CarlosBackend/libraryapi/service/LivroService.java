@@ -32,6 +32,9 @@ public class LivroService {
     }
 
     public void atualizar(Livro livro) {
+        if(livro.getId() == null){
+            throw new IllegalArgumentException("Para atualizar, é necessário que o livro já esteja salvo na base de dados");
+        }
         livroRepository.save(livro);
     }
 
@@ -53,6 +56,10 @@ public class LivroService {
         }
         if(anoPublicacao != null){
             specs = specs.and(anoPublicacaoEqual(anoPublicacao));
+        }
+        if(nomeAutor != null){
+            specs = specs.and(LivroSpecs.nomeAutorLike(nomeAutor));
+            //select * from livro where upper(autor.nome) like %:nome%
         }
         return livroRepository.findAll(specs);
     }
