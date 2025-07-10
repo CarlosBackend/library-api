@@ -3,6 +3,7 @@ import io.github.CarlosBackend.libraryapi.model.GeneroLivro;
 import io.github.CarlosBackend.libraryapi.model.Livro;
 import io.github.CarlosBackend.libraryapi.repository.LivroRepository;
 import io.github.CarlosBackend.libraryapi.repository.specs.LivroSpecs;
+import io.github.CarlosBackend.libraryapi.validador.LivroValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,10 @@ import static io.github.CarlosBackend.libraryapi.repository.specs.LivroSpecs.ano
 @RequiredArgsConstructor
 public class LivroService {
     private final LivroRepository livroRepository;
+    private final LivroValidator validator;
 
     public Livro salvar(Livro livro) {
+        validator.validar(livro);
         livroRepository.save(livro);
         return livro;
     }
@@ -35,6 +38,7 @@ public class LivroService {
         if(livro.getId() == null){
             throw new IllegalArgumentException("Para atualizar, é necessário que o livro já esteja salvo na base de dados");
         }
+        validator.validar(livro);
         livroRepository.save(livro);
     }
 
