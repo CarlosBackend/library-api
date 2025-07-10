@@ -1,5 +1,4 @@
 package io.github.CarlosBackend.libraryapi.repository.specs;
-
 import io.github.CarlosBackend.libraryapi.model.GeneroLivro;
 import io.github.CarlosBackend.libraryapi.model.Livro;
 import jakarta.persistence.criteria.Join;
