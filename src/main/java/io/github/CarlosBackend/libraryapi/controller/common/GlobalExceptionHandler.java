@@ -1,8 +1,10 @@
 package io.github.CarlosBackend.libraryapi.controller.common;
 import io.github.CarlosBackend.libraryapi.controller.dto.ErroCampo;
 import io.github.CarlosBackend.libraryapi.controller.dto.ErroResposta;
+import io.github.CarlosBackend.libraryapi.exceptions.CampoInvalidoException;
 import io.github.CarlosBackend.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import io.github.CarlosBackend.libraryapi.exceptions.RegistroDuplicadoException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +37,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErroResposta handleOperacaoNaoPermitida(OperacaoNaoPermitidaException e){
         return ErroResposta.respostaPadrao(e.getMessage());
+    }
+    @ExceptionHandler(CampoInvalidoException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErroResposta handleCampoInvalidoException(CampoInvalidoException e){
+        return new ErroResposta(HttpStatus.UNPROCESSABLE_ENTITY.value(),"Erro validação", List.of(new ErroCampo(e.getCampo(), e.getMessage())));
     }
 
     @ExceptionHandler(RuntimeException.class)
