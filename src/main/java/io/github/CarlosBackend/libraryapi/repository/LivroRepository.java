@@ -21,7 +21,6 @@ import java.util.UUID;
  */
 public interface LivroRepository extends JpaRepository<Livro, UUID>, JpaSpecificationExecutor<Livro> {
     //Query Method
-
     List<Livro> findByAutor(Autor autor);
 
     // select * from livro where titulo = titulo

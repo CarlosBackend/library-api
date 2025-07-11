@@ -20,7 +20,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErroResposta handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        List<FieldError> fieldErrors = e.getFieldErrors();
+        List<FieldError> fieldErrors = e.getFieldErrors();// FieldErrors é uma lista de FieldError, que é uma classe
+                                                            // do Spring que representa um erro de validação de um campo específico.
         List<ErroCampo> listaErros = fieldErrors.stream()
                 .map(fe -> new ErroCampo(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
