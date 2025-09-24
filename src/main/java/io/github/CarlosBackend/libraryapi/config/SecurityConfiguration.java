@@ -15,7 +15,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilter(HttpSecurity http) throws Exception{
         return http
                 .csrf(AbstractHttpConfigurer::disable) // desabilita o csrf
-                .formLogin(Customizer.withDefaults()) // habilita o form login
+
                 .httpBasic(Customizer.withDefaults()) // habilita o basic auth
                 .authorizeHttpRequests(authorize -> {
                     authorize.anyRequest().authenticated();
