@@ -1,6 +1,7 @@
 package io.github.CarlosBackend.libraryapi.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,8 +23,12 @@ public class SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // desabilita o csrf
                 .httpBasic(Customizer.withDefaults()) // habilita o basic auth
-                .formLogin(configurer -> configurer.loginPage("/login").permitAll())
+                .formLogin(configurer -> {configurer.loginPage("/login");
+                })
                 .authorizeHttpRequests(authorize -> {
+                    authorize.requestMatchers("/login").permitAll();
+                    authorize.requestMatchers("/autores/**").hasRole("ADMIN");
+                    authorize.requestMatchers("/livros/**").hasAnyRole("ADMIN","USER");
                     authorize.anyRequest().authenticated();
                 }) // autoriza qualquer requisicao
                 .build();
