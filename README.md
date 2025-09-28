@@ -1,5 +1,5 @@
 # Library
-- Applcation for APIRESTFUL
+- Applcação API RESTFUL
 - Essa aplicação está sendo desenvolvida para colocar as melhores praticas de uma API Restful em java Spring
 - Ela Simula uma aplicação de Autores e livros
  # Funcionalidades
