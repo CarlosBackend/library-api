@@ -16,6 +16,7 @@ public class Usuario {
     @Column
 
     private String login;
+
     @Column
     private String senha;
 
