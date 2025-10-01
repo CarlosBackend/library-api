@@ -1,8 +1,10 @@
 package io.github.CarlosBackend.libraryapi.service;
 import io.github.CarlosBackend.libraryapi.model.GeneroLivro;
 import io.github.CarlosBackend.libraryapi.model.Livro;
+import io.github.CarlosBackend.libraryapi.model.Usuario;
 import io.github.CarlosBackend.libraryapi.repository.LivroRepository;
 import io.github.CarlosBackend.libraryapi.repository.specs.LivroSpecs;
+import io.github.CarlosBackend.libraryapi.security.SecurityService;
 import io.github.CarlosBackend.libraryapi.validador.LivroValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,9 +23,12 @@ import static io.github.CarlosBackend.libraryapi.repository.specs.LivroSpecs.ano
 public class LivroService {
     private final LivroRepository livroRepository;
     private final LivroValidator validator;
+    private final SecurityService securityService;
 
     public Livro salvar(Livro livro) {
+        Usuario usuarioLogado = securityService.obterUsuarioLogado();
         validator.validar(livro);
+        livro.setUsuario(usuarioLogado);
         livroRepository.save(livro);
         return livro;
     }

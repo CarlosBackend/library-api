@@ -1,8 +1,10 @@
 package io.github.CarlosBackend.libraryapi.service;
 import io.github.CarlosBackend.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import io.github.CarlosBackend.libraryapi.model.Autor;
+import io.github.CarlosBackend.libraryapi.model.Usuario;
 import io.github.CarlosBackend.libraryapi.repository.AutorRepository;
 import io.github.CarlosBackend.libraryapi.repository.LivroRepository;
+import io.github.CarlosBackend.libraryapi.security.SecurityService;
 import io.github.CarlosBackend.libraryapi.validador.AutorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -20,10 +22,13 @@ public class AutorService {
     private final AutorRepository autorRepository;
     private final AutorValidator validator;
     private final LivroRepository livroRepository;
+    private final SecurityService securityService;
 
 
     public Autor salvar(Autor autor){
+        Usuario usuarioLogado = securityService.obterUsuarioLogado();
         validator.validar(autor);
+        autor.setUsuario(usuarioLogado);
         return autorRepository.save(autor);
     }
     public void atualizar(Autor autor){
