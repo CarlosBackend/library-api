@@ -24,13 +24,16 @@ public class SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // desabilita o csrf
                 .httpBasic(Customizer.withDefaults()) // habilita o basic auth
-                .formLogin(configurer -> {configurer.loginPage("/login");
-                })
+
+                //.formLogin(configurer -> {configurer.loginPage("/login");
+                //})
+                .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/login").permitAll();
                     authorize.requestMatchers(HttpMethod.POST,"/usuarios").permitAll();
                     authorize.anyRequest().authenticated();
                 }) // autoriza qualquer requisicao
+                .oauth2Login(Customizer.withDefaults())
                 .build();
     }
     @Bean
