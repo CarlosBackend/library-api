@@ -4,6 +4,7 @@ import io.github.CarlosBackend.libraryapi.model.Autor;
 import io.github.CarlosBackend.libraryapi.model.GeneroLivro;
 import io.github.CarlosBackend.libraryapi.model.Livro;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,21 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
  * @see
  */
-public interface LivroRepository extends JpaRepository<Livro, UUID> {
-
+public interface LivroRepository extends JpaRepository<Livro, UUID>, JpaSpecificationExecutor<Livro> {
     //Query Method
-
     List<Livro> findByAutor(Autor autor);
 
     // select * from livro where titulo = titulo
     List<Livro> findByTitulo(String titulo);
 
-    List<Livro> findByIsbn(String isbn);
+    Optional<Livro> findByIsbn(String isbn);
 
     //Select * from livro where titulo = titulo and preco = preco
     List<Livro> findByTituloAndPreco(String titulo, BigDecimal preco);
@@ -43,6 +43,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
      * select a.*
      * from livro l
      * join autor a on a.id = l.id_autor
+     *
      * @return
      */
     @Query("select a from Livro l join l.autor a ")
@@ -77,4 +78,6 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
     @Transactional
     @Query(" update Livro set dataPublicacao = ?1")
     void updateDataPublicacao(LocalDate dataPublicacao);
+
+    boolean existsByAutor(Autor autor);
 }

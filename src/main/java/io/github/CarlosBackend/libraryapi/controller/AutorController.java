@@ -1,10 +1,14 @@
 package io.github.CarlosBackend.libraryapi.controller;
+
 import io.github.CarlosBackend.libraryapi.controller.dto.AutorDTO;
+import io.github.CarlosBackend.libraryapi.controller.mappers.AutorMapper;
 import io.github.CarlosBackend.libraryapi.model.Autor;
 import io.github.CarlosBackend.libraryapi.service.AutorService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -14,80 +18,75 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/autores")
-
+@RequiredArgsConstructor
 //http://localhost:8080/autores
-public class AutorController {
-
+public class AutorController implements GenericController {
     private final AutorService service;
-
-    public AutorController(AutorService service) {
-        this.service = service;
-    }
+    private final AutorMapper mapper;
 
     @PostMapping
-    public ResponseEntity<Void> salvar(@RequestBody AutorDTO autor){
-        var autorEntidade = autor.mapearParaAutor();
-        service.salvar(autorEntidade);
+    @PreAuthorize("hasRole('GERENTE')")
+    public ResponseEntity<Void> salvar(@RequestBody @Valid AutorDTO dto) {
 
-        //http://localhost:8080/autores/kdfjnejsnfefbsjfeb
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(autorEntidade.getId())
-                .toUri();
+        var autor = mapper.toEntity(dto);
+        service.salvar(autor);
+
+        URI location = gerarHeaderLocation(autor.getId());
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id){
+    @PreAuthorize("hasAnyRole('GERENTE','OPERADOR')")
+    // Endpoint para obter detalhes de um autor pelo ID
+    public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id) {
+        // Converte a string ID recebida para um UUID
         var idAutor = UUID.fromString(id);
-        Optional<Autor> autorOptional = service.obterPorId(idAutor);
-        if(autorOptional.isPresent()){
-            Autor autor = autorOptional.get();
-            AutorDTO dto = new AutorDTO(autor.getId(),
-                    autor.getNome(),
-                    autor.getDate(),
-                    autor.getNacionalidade());
-            return ResponseEntity.ok(dto);
-        }
-        return ResponseEntity.notFound().build();
+        // Verifica se o autor existe no banco de dados
+        return service.obterPorId(idAutor)
+                .map(autor -> {
+                    // Converte a entidade Autor para DTO usando mapper
+                    AutorDTO dto = mapper.toDTO(autor);
+                    return ResponseEntity.ok(dto);
+                }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deletar(@PathVariable("id") String id){
-            var idAutor = UUID.fromString(id);
-            Optional<Autor> autorOptional = service.obterPorId(idAutor);
-            if(autorOptional.isEmpty()){
-                return ResponseEntity.notFound().build();
-            }
-            service.deletar(autorOptional.get());
-            return ResponseEntity.noContent().build();
+    @PreAuthorize("hasRole('GERENTE')")
+    public ResponseEntity<Void> deletar(@PathVariable("id") String id) {
+        var idAutor = UUID.fromString(id);
+        Optional<Autor> autorOptional = service.obterPorId(idAutor);
+        if (autorOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        service.deletar(autorOptional.get());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('GERENTE','OPERADOR')")
     public ResponseEntity<List<AutorDTO>> pesquisar(
             @RequestParam(value = "nome", required = false) String nome,
-            @RequestParam(value = "nacionalidade", required = false) String nacionalidade){
-        List<Autor> resultado = service.pesquisa(nome, nacionalidade);
-        List<AutorDTO> lista = resultado.stream().map(autor -> new AutorDTO(autor.getId(),
-                autor.getNome(),
-                autor.getDate(),
-                autor.getNacionalidade())
-        ).collect(Collectors.toList());
+            @RequestParam(value = "nacionalidade", required = false) String nacionalidade) {
+        List<Autor> resultado = service.pesquisaByExample(nome, nacionalidade);
+        List<AutorDTO> lista = resultado.stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(lista);
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> atualizar(
-            @PathVariable("id") String id, @RequestBody AutorDTO dto){
+            @PathVariable("id") String id, @RequestBody @Valid AutorDTO dto) {
         var idAutor = UUID.fromString(id);
         Optional<Autor> autorOptional = service.obterPorId(idAutor);
 
-        if(autorOptional.isEmpty()){
+        if (autorOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Autor autor = autorOptional.get();
         autor.setNome(dto.nome());
-        autor.setDate(dto.dataNascimento());
+        autor.setDataNascimento(dto.dataNascimento());
         autor.setNacionalidade(dto.nacionalidade());
         service.atualizar(autor);
         return ResponseEntity.noContent().build();

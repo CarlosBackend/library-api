@@ -29,12 +29,14 @@ public class Autor {
     private String nome;
 
     @Column(name = "data_nascimento", nullable = false)
-    private LocalDate date;
+    private LocalDate dataNascimento;
 
     @Column(name = "nacionalidade", length = 50, nullable = false)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY
+         //   , cascade = CascadeType.ALL, fetch = FetchType.LAZY
+    )
     private List<Livro> livros;
 
     @CreatedDate
@@ -45,7 +47,7 @@ public class Autor {
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
-    @Column(name = "id_usuario")
-    private UUID idUsuario;
-
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 }
