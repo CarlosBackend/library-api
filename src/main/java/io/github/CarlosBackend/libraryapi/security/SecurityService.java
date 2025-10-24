@@ -1,5 +1,4 @@
 package io.github.CarlosBackend.libraryapi.security;
-
 import io.github.CarlosBackend.libraryapi.model.Usuario;
 import io.github.CarlosBackend.libraryapi.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,9 @@ public class SecurityService {
 
     public Usuario obterUsuarioLogado(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return usuarioService.obterLogin(userDetails.getUsername());
+        if (authentication instanceof CustomAuthentication customAuthentication) {
+            return customAuthentication.getUsuario();
+        }
+        return null;
     }
 }
