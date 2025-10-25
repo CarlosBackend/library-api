@@ -23,7 +23,7 @@ CREATE TABLE livro(
 );
 
 create table usuario(
-    id uui not null primary key,
+    id uuid not null primary key,
     login varchar(20) not null unique,
     senha varchar(300) not null,
     roles varchar[]
