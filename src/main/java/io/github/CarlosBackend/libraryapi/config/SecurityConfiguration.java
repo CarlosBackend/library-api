@@ -1,6 +1,8 @@
 package io.github.CarlosBackend.libraryapi.config;
 import io.github.CarlosBackend.libraryapi.security.CustomUsertDetailsService;
+import io.github.CarlosBackend.libraryapi.security.LoginSocialSuccessHandler;
 import io.github.CarlosBackend.libraryapi.service.UsuarioService;
+import lombok.extern.java.Log;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,7 +23,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain securityFilter(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilter(
+            HttpSecurity http,
+            LoginSocialSuccessHandler successHandler
+            ) throws Exception{
         return http
                 .csrf(AbstractHttpConfigurer::disable) // desabilita o csrf
                 .httpBasic(Customizer.withDefaults()) // habilita o basic auth
@@ -34,7 +39,9 @@ public class SecurityConfiguration {
                     authorize.requestMatchers(HttpMethod.POST,"/usuarios").permitAll();
                     authorize.anyRequest().authenticated();
                 }) // autoriza qualquer requisicao
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(
+                        oauth2 -> oauth2.successHandler(successHandler)
+                )
                 .build();
     }
     @Bean
