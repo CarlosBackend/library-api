@@ -1,7 +1,9 @@
 # 📚 API de Livros
 
-Uma API RESTful desenvolvida em **Java Spring Boot**, utilizando **PostgreSQL** como banco de dados e **Docker** para containerização.  
+Uma API RESTful desenvolvida em curso spring boot expert da udemy **Java Spring Boot**, utilizando **PostgreSQL** como banco de dados e **Docker** para containerização.  
 O projeto oferece operações completas de **CRUD** (Create, Read, Update, Delete) para gerenciamento de **Autores**, **Livros** e **Usuários**.
+
+Esse repositorio representa os commits feitos durante o curso para consolidar o aprendizado e consultar futuramente o que foi apresentado durante o curso
 
 ---
 
